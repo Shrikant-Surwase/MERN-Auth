@@ -13,7 +13,7 @@ mongoose
 .connect(process.env.MONGO_URI)
 .then(()=>{
     app.listen(5500)
-    console.log("database connected")    
+    console.log("database connected success!!")    
 })
 .catch((err)=>{
     console.log(err)
