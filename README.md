@@ -1,2 +1,2 @@
 # MERN-Auth
-MERN stack Auth. functionality only backend
+## Backend which contians the apis call for login , signup like stuffs!!!
