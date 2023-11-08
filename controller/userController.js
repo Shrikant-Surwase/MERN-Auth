@@ -33,7 +33,7 @@ const login = async (req, res, next) => {
     userData = await User.findOne({ email: email }); //findone function is used to check the email is present or not
     if (!userData || !bcrypt.compareSync(password, userData.password)) {
       //bcrypt is used to compare the password which is hashed and reture boolean values (true/false)
-      return res.status(401).json({ msg: "Invalid Email or Password" }); //if user is not match return error
+      return res.status(401).json({ msg: "Invalid Email or Password!!" }); //if user is not match return error
     }
     const token = await jwt.sign(
       { id: userData._id,name:userData.name,email:userData.email}, //payload which is converted into token using jwt
