@@ -1,8 +1,9 @@
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
 const dotenv = require("dotenv").config();
-const signup = async (req, res, next) => {
+const signup = async (req, res, next) => { //async function because async indicates return promises
   let { name, email, password } = req.body;
 
   try {
@@ -13,13 +14,13 @@ const signup = async (req, res, next) => {
         .json({ message: "User already exists! Login Instead" });
     }
     password = password.toString();
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10); //await is used to temporarly suspend the function calling
     const user = new User({
       name,
       email,
       password: hashedPassword,
     });
-    await user.save();
+    await user.save(); //create new user
     return res.status(201).json({ message: user });
   } catch (err) {
     console.log(err);
@@ -35,23 +36,62 @@ const login = async (req, res, next) => {
       return res.status(401).json({ msg: "Invalid Email or Password" }); //if user is not match return error
     }
     const token = await jwt.sign(
-      { id: userData._id },
+      { id: userData._id,name:userData.name,email:userData.email}, //payload which is converted into token using jwt
       process.env.SECRETE_KEY,
       {
-        expiresIn: "25min",
+        expiresIn: "25s",
+
       }
     );
-    return res.status(200).json({ msg: `Welcome ${userData.name}`,token:token}); //else retun the response with the name of the user
-    console.log(token)
+    res.cookie(String(userData._id),token,{
+      path:'/',
+      expires:new Date(Date.now()+1000*30),
+      httpOnly:true,
+      sameSite:"lax"
+    })
+    return res
+      .status(200)
+      .json({ msg: `Welcome ${userData.name}`, token: token }); //else retun the response with the name of the user
+    console.log(token);
   } catch (err) {
     console.log(err);
   }
- 
 };
-const getData = async (req, res, next) => {
-  let data = await User.find();
-  return res.status(200).json({ message: "success", data });
+const verifyToken = (req,res,next)=>{
+  let token = req.headers.cookie;
+  
+  token = token.split("=")[1];
+  console.log(token)
+  if(!token){
+    return res.status(404).json({msg:"token is not generated!!"})
+  }
+  jwt.verify(String(token),process.env.SECRETE_KEY,(err,user)=>{
+    if(err){
+      return res.status(404).json({msg:"token is not mached!!"})
+    }
+    req.id = user.id
+    console.log(req.id)
+  })
+  next();
+}
+const getUser = async (req, res, next) => {
+  const userId = req.id;
+  try {
+    let user = await User.findById(userId,"-password")
+    if(!user){
+      return res.status(404).json({msg:"invalid user id"})
+    }
+    return res.status(200).json({user})
+   
+  } catch (error) {
+    console.log(error)
+  }
 };
-exports.getData = getData;
+
+
 exports.signup = signup;
 exports.login = login;
+exports.verifyToken = verifyToken;
+exports.getUser = getUser;
+
+
