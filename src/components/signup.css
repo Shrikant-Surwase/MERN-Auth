@@ -1,0 +1,35 @@
+input{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 5%;
+}
+.container{
+    height: 80vh;
+    text-align: center;
+    background-color: rgb(184, 167, 167);
+    margin:60px 80px;
+    border-radius: 10%;
+}
+form{
+  margin: 10px 40px;
+}
+
+h1,label{
+    text-transform: capitalize;
+}
+button{
+    font-size: 20px;
+    color: rgb(80, 28, 28);
+    cursor: pointer;
+    padding: 12px 18px;
+    
+}
+button:hover{
+ background-color: rgb(221, 105, 105);
+ color: black;
+ 
+}
