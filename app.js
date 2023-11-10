@@ -4,8 +4,10 @@ const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv').config()
 const router = require('./routes/userRoutes')
+const cors = require("cors")
 const app = express()
 app.use(cookieParser());
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 
